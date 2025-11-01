@@ -1,29 +1,50 @@
-# class_static_methods_demo.py
+CREATE DATABASE IF NOT EXISTS alx_book_store;
 
-class Calculator:
-    # Class attribute
-    calculation_type = "Arithmetic Operations"
+USE alx_book_store;
 
-    @staticmethod
-    def add(a, b):
-        """Static method: Adds two numbers without accessing class data."""
-        return a + b
+-- Create the Authors table
+-- This table must be created before the Books table due to the foreign key constraint
+CREATE TABLE Authors (
+    author_id INT AUTO_INCREMENT PRIMARY KEY,
+    author_name VARCHAR(215) NOT NULL
+);
 
-    @classmethod
-    def multiply(cls, a, b):
-        """Class method: Multiplies two numbers and accesses class-level data."""
-        print(f"Calculation type: {cls.calculation_type}")
-        return a * b
-from class_static_methods_demo import Calculator
+-- Create the Customers table
+-- This table must be created before the Orders table
+CREATE TABLE Customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(215) NOT NULL,
+    email VARCHAR(215) NOT NULL UNIQUE,
+    address TEXT
+);
 
-def main():
-    # Using the static method
-    sum_result = Calculator.add(10, 5)
-    print(f"The sum is: {sum_result}")
+-- Create the Books table
+-- This table references the Authors table
+CREATE TABLE Books (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(130) NOT NULL,
+    author_id INT,
+    price DOUBLE,
+    publication_date DATE,
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
 
-    # Using the class method
-    product_result = Calculator.multiply(10, 5)
-    print(f"The product is: {product_result}")
+-- Create the Orders table
+-- This table references the Customers table
+CREATE TABLE Orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
 
-if __name__ == "__main__":
-    main()
+-- Create the Order_Details table
+-- This table is a junction table linking Orders and Books
+CREATE TABLE Order_Details (
+    orderdetailid INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    book_id INT,
+    quantity DOUBLE,
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (book_id) REFERENCES Books(book_id)
+);
